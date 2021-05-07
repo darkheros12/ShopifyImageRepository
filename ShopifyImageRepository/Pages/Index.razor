@@ -1,0 +1,64 @@
+﻿@page "/"
+@inject ShopifyImageRepository.IService.IImageService imageService
+@using ShopifyImageRepository.Data
+@using ShopifyImageRepository.PageClass
+
+<div>
+    <div>
+        <input @bind="image.ImageName" type="text" placeholder="Image Name"/>
+    </div>
+    <div>
+        <InputFile OnChange="HandleFileSelection" />
+    </div>
+    <div>
+        <img src="@imgSrc"/>
+    </div>
+    <div>
+        <button @onclick="SaveImage">Save Image</button>
+        <button @onclick="ReadImage">Read Image</button>
+        <span>@Message</span>
+    </div>
+</div>
+
+@code{
+    string imgSrc = "";
+    string Message = "";
+    IFileListEntry file = null;
+    byte[] _fileBytes = null;
+    ImageModel image = new ImageModel();
+
+    public async Task HandleFileSelection(IFileListEntry[] files)
+    {
+        if(files.Count() > 0)
+        {
+            file = files.FirstOrDefault();
+            using (var ms = new MemoryStream())
+            {
+                await file.Data.CopyToAsync(ms);
+                _fileBytes = ms.ToArray();
+
+                ImagePage imagePage = new ImagePage(imageService);
+                var image = imagePage.GetImage(Convert.ToBase64String(_fileBytes));
+                imgSrc = string.Format("data:image/jpg;base64,{0}" + Convert.ToBase64String(image));
+            }
+        }
+    }
+
+    public void SaveImage()
+    {
+        ImagePage imagePage = new ImagePage(imageService);
+        Message = imagePage.SaveImageInformations(_fileBytes, image);
+
+        image = new ImageModel();
+        imgSrc = "";
+    }
+
+    public void ReadImage()
+    {
+        ImagePage imagePage = new ImagePage(imageService);
+        image = imagePage.GetSavedImage();
+        imgSrc = image.ImageUrl;
+        Message = "";
+       
+    }
+}
