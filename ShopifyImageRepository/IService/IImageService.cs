@@ -8,7 +8,7 @@ namespace ShopifyImageRepository.IService
 {
     public interface IImageService
     {
-        ImageModel Save(ImageModel objImage);
-        ImageModel GetSavedImage();
+        ImageModel Save(ImageModel objImage, string hardCodedConnectionString = null);
+        List<ImageModel> GetSavedImages(string hardCodedConnectionString = null);
     }
 }

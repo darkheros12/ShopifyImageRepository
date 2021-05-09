@@ -13,10 +13,13 @@ namespace ShopifyImageRepository.Service
     public class ImageService : IImageService
     {
         ImageModel _objImage = new ImageModel();
-        public ImageModel GetSavedImage()
+        List<ImageModel> _imageList = null;
+
+        public List<ImageModel> GetSavedImages(string hardCodedConnectionString = null)
         {
             _objImage = new ImageModel();
-            using (IDbConnection connection = new SqlConnection(Global.ConnectionString))
+            var connectionString = Global.ConnectionString ?? hardCodedConnectionString;
+            using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 if (connection.State == ConnectionState.Closed) connection.Open();
 
@@ -24,17 +27,19 @@ namespace ShopifyImageRepository.Service
 
                 if(objImages != null && objImages.Count() > 0)
                 {
-                    _objImage = objImages.First();
+                    _imageList = objImages;
                 }
 
-                return _objImage;
+                return _imageList;
             }
         }
 
-        public ImageModel Save(ImageModel objImage)
+        public ImageModel Save(ImageModel objImage, string hardCodedConnectionString = null)
         {
             _objImage = new ImageModel();
-            using (IDbConnection connection = new SqlConnection(Global.ConnectionString))
+            var connectionString = Global.ConnectionString ?? hardCodedConnectionString;
+
+            using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 if (connection.State == ConnectionState.Closed) connection.Open();
 

@@ -3,22 +3,39 @@
 @using ShopifyImageRepository.Data
 @using ShopifyImageRepository.PageClass
 
-<div>
+<EditForm Model="@image">
     <div>
-        <input @bind="image.ImageName" type="text" placeholder="Image Name"/>
+        <input @bind="image.ImageName" type="text" placeholder="Image Name" />
     </div>
     <div>
-        <InputFile OnChange="HandleFileSelection" />
-    </div>
-    <div>
-        <img src="@imgSrc"/>
+        <InputFile OnChange="OnInputFileChange" multiple/>
     </div>
     <div>
         <button @onclick="SaveImage">Save Image</button>
-        <button @onclick="ReadImage">Read Image</button>
         <span>@Message</span>
     </div>
-</div>
+</EditForm>
+
+
+@if (imageList.Count() > 0)
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var item in imageList)
+            {
+                <div class="col">
+                    <div>
+                        <img style="height: 100%; width: 100%"  src="@item.ImageUrl" />
+                    </div>
+                    <div>
+                        <div>@item.ImageName</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
 
 @code{
     string imgSrc = "";
@@ -26,21 +43,30 @@
     IFileListEntry file = null;
     byte[] _fileBytes = null;
     ImageModel image = new ImageModel();
+    List<ImageModel> imageList = new List<ImageModel>();
 
-    public async Task HandleFileSelection(IFileListEntry[] files)
+    protected override void OnInitialized()
     {
-        if(files.Count() > 0)
-        {
-            file = files.FirstOrDefault();
-            using (var ms = new MemoryStream())
-            {
-                await file.Data.CopyToAsync(ms);
-                _fileBytes = ms.ToArray();
+        ReadImage();
+    }
 
-                ImagePage imagePage = new ImagePage(imageService);
-                var image = imagePage.GetImage(Convert.ToBase64String(_fileBytes));
-                imgSrc = string.Format("data:image/jpg;base64,{0}" + Convert.ToBase64String(image));
+    public async Task OnInputFileChange(IFileListEntry[] files)
+    {
+        if (files.Count() > 0)
+        {
+            foreach(var item in files)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    ImagePage imagePage = new ImagePage(imageService);
+
+                    await item.Data.CopyToAsync(ms);
+                    _fileBytes = ms.ToArray();
+                    var image = imagePage.GetImage(Convert.ToBase64String(_fileBytes));
+                    imgSrc = string.Format("data:image/jpg;base64,{0}" + Convert.ToBase64String(image));
+                }
             }
+
         }
     }
 
@@ -51,14 +77,14 @@
 
         image = new ImageModel();
         imgSrc = "";
+        ReadImage();
     }
 
     public void ReadImage()
     {
         ImagePage imagePage = new ImagePage(imageService);
-        image = imagePage.GetSavedImage();
-        imgSrc = image.ImageUrl;
+        imageList = imagePage.GetSavedImage();
         Message = "";
-       
+
     }
 }

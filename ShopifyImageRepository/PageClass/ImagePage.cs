@@ -27,12 +27,18 @@ namespace ShopifyImageRepository.PageClass
             return "Failed";
         }
 
-        public ImageModel GetSavedImage()
+        public List<ImageModel> GetSavedImage()
         {
-            var image = _imageService.GetSavedImage();
-            image.Image = this.GetImage(Convert.ToBase64String(image.Image));
-            image.ImageUrl = string.Format("data:image/jpg;base64," + Convert.ToBase64String(image.Image));
-            return image;
+            var imageList = _imageService.GetSavedImages();
+
+            foreach (var item in imageList)
+            {
+                item.Image = this.GetImage(Convert.ToBase64String(item.Image));
+                item.ImageUrl = string.Format("data:image/jpg;base64," + Convert.ToBase64String(item.Image));
+            }
+
+
+            return imageList;
         }
 
         public byte[] GetImage(string base64String)
