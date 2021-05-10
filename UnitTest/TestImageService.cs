@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShopifyImageRepository.Data;
 using ShopifyImageRepository.IService;
 using ShopifyImageRepository.Service;
+using System;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -30,14 +31,18 @@ namespace UnitTest
         public void TestSave()
         {
             // Arrange
+            Random rand = new Random();
             ImageModel image = new ImageModel();
+            image.ImageId = 0;
+            image.Image = new byte[12345];
             IImageService imageService = new ImageService();
+            
 
             // Act
             var imageList = imageService.Save(image, connectionString);
 
             // Assert
-            Assert.IsTrue(imageList.Count() > 0);
+            Assert.IsNotNull(imageList);
         }
 
     }
