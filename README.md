@@ -8,3 +8,5 @@
 5. save image
 
 I made a connection to azure database as it most likely provide some security instead of my local database. Therefore, there is some image already.
+
+project made by: The Phi Nguyen
