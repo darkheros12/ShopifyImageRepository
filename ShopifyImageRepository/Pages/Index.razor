@@ -19,11 +19,11 @@
 
 @if (imageList.Count() > 0)
 {
-    <div class="container">
+    <div style="display: table; width: 100%">
         <div class="row">
             @foreach (var item in imageList)
             {
-                <div class="col">
+                <div class="col-sm-2" style="display: table-cell; padding: 16px">
                     <div>
                         <img style="height: 100%; width: 100%"  src="@item.ImageUrl" />
                     </div>

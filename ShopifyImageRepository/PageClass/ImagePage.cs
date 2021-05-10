@@ -31,14 +31,20 @@ namespace ShopifyImageRepository.PageClass
         {
             var imageList = _imageService.GetSavedImages();
 
-            foreach (var item in imageList)
+            if(imageList != null)
             {
-                item.Image = this.GetImage(Convert.ToBase64String(item.Image));
-                item.ImageUrl = string.Format("data:image/jpg;base64," + Convert.ToBase64String(item.Image));
+                foreach (var item in imageList)
+                {
+                    item.Image = this.GetImage(Convert.ToBase64String(item.Image));
+                    item.ImageUrl = string.Format("data:image/jpg;base64," + Convert.ToBase64String(item.Image));
+                }
+
+
+                return imageList;
             }
 
-
-            return imageList;
+            return new List<ImageModel>();
+                
         }
 
         public byte[] GetImage(string base64String)
