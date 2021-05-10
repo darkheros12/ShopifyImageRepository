@@ -1,6 +1,6 @@
 # ShopifyImageRepository
 
-##How to set up
+## How to set up
 1. You will need Visual Studio community 2019
 2. clone github to your local
 3. run the app by using IIS Express, it should open up a page
